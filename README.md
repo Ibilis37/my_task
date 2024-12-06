@@ -64,9 +64,9 @@ $\frac{d^2z}{dt^2} = -\frac{C_dAp}{2}(\frac{dz}{dt})^2 - g$
 
 $x(t_0) = x_0, y(t_0) = y_0, z(t_0)=z_0;$
 
-$V_x(t_0) = Vcos(\theta)cos(\alpha)$
+$V_y(t_0) = Vcos(\theta)cos(\alpha)$
 
-$V_y(t_0) = Vsin(\theta)sin(\alpha)$
+$V_x(t_0) = Vsin(\theta)sin(\alpha)$
 
 $V_z(t_0) = Vsin(\alpha)$
 
