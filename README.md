@@ -54,11 +54,11 @@ $V_y = \frac{dy}{dt}$
 $V_z = \frac{dz}{dt}$
 и разделим обе части уравнений на m:
 
-$\frac{d^2x}{dt^2} = -\frac{C_dAp}{2}(\frac{dx}{dt})^2$
+$\frac{d^2x}{dt^2} = -\frac{C_dAp}{2m}(\frac{dx}{dt})^2$
 
-$\frac{d^2y}{dt^2} = -\frac{C_dAp}{2}(\frac{dy}{dt})^2$
+$\frac{d^2y}{dt^2} = -\frac{C_dAp}{2m}(\frac{dy}{dt})^2$
 
-$\frac{d^2z}{dt^2} = -\frac{C_dAp}{2}(\frac{dz}{dt})^2 - g$
+$\frac{d^2z}{dt^2} = -\frac{C_dAp}{2m}(\frac{dz}{dt})^2 - g$
 
 При начальных условиях:
 
