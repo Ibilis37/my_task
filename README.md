@@ -13,7 +13,7 @@
 
 ![](./mm1.jpg)
 ### Основные параметры:
-- $v_0 $ — начальная скорость мяча
+- $v_0$ — начальная скорость мяча
 - $x_0, y_0, z_0$ — начальное положение мяча
 - $\theta$ —  угол удара по горизонтали
 - $\alpha$ — угол удара по вертикали
@@ -54,13 +54,15 @@ $V_y = \frac{dy}{dt}$
 $V_z = \frac{dz}{dt}$
 
 $V = \sqrt{V_x^2 + V_y^2 + V_z^2}$
+
+
 и разделим обе части уравнений на m:
 
-$\frac{d^2x}{dt^2} = -\frac{C_dAp}{2m} V (\frac{dx}{dt})$
+$\frac{d^2x}{dt^2} = -\frac{C_dApV}{2m} \frac{dx}{dt}$
 
-$\frac{d^2y}{dt^2} = -\frac{C_dAp}{2m} V (\frac{dy}{dt})$
+$\frac{d^2y}{dt^2} = -\frac{C_dApV}{2m}  \frac{dy}{dt}$
 
-$\frac{d^2z}{dt^2} = -\frac{C_dAp}{2m} V (\frac{dz}{dt}) - g$
+$\frac{d^2z}{dt^2} = -\frac{C_dApV}{2m}  \frac{dz}{dt} - g$
 
 При начальных условиях:
 
