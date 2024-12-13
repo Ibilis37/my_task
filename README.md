@@ -43,11 +43,11 @@ $\vec{F_p} = \vec{F_{тяж}} + \vec{F_{сопр}}$
 
 Получим основные уравнения движения мяча, спроектировав силы на оси $x,y,z$:
 
-$m \frac{dV_x}{dt} = -\frac{1}{2}C_dApV^{2}_x$
+$m \frac{dV_x}{dt} = -\frac{1}{2}C_dApVV_x$
 
-$m \frac{dV_y}{dt} = -\frac{1}{2}C_dApV^{2}_y $
+$m \frac{dV_y}{dt} = -\frac{1}{2}C_dApVV_y $
 
-$m \frac{dV_z}{dt} = -\frac{1}{2}C_dApV^{2}_z - mg$
+$m \frac{dV_z}{dt} = -\frac{1}{2}C_dApVV_z - mg$
 
 Воспользуемся условием, что $V_x = \frac{dx}{dt}$
 $V_y = \frac{dy}{dt}$
