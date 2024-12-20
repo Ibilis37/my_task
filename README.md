@@ -96,6 +96,204 @@ $V_z(t_0) = Vsin(\alpha)$
 
 ## Программная реализация
 ```python 
+import numpy as np
+from scipy.integrate import solve_ivp
+
+# Константы
+m = 0.43  # масса мяча, кг
+R_m = 0.11  # радиус мяча, м
+C_d = 0.47  # коэффициент сопротивления воздуха
+rho = 1.2255  # плотность воздуха, кг/м^3
+g = 9.81  # ускорение свободного падения, м/с^2
+A = np.pi * R_m**2  # площадь поперечного сечения мяча, м^2
+goal_width = 7.32  # ширина ворот, м
+goal_height = 2.44  # высота ворот, м
+length = 100  # длина поля, м
+width = 64  # ширина поля, м
+
+def equations(t, state):
+    """Уравнения движения мяча."""
+    x, y, z, vx, vy, vz = state
+    v = np.sqrt(vx**2 + vy**2 + vz**2)  # модуль скорости
+    ax = -0.5 * C_d * A * rho * v * vx / m
+    ay = -0.5 * C_d * A * rho * v * vy / m
+    az = -g - 0.5 * C_d * A * rho * v * vz / m
+    return [vx, vy, vz, ax, ay, az]
+
+def is_goal(x, y, z):
+    """Проверка, попал ли мяч в ворота."""
+    return ((width - goal_width) / 2 + R_m <= y <= (width + goal_width) / 2 - R_m and
+            (R_m <= z <= goal_height + R_m) and abs(x-length)<1)
+
+def simulate_shot(v0,x0,y0,z0, theta, phi):
+    """Симуляция удара мяча."""
+    theta_rad = np.radians(theta)
+    phi_rad = np.radians(phi)
+
+    vx0 = v0 * np.cos(theta_rad) * np.cos(phi_rad)
+    vy0 = v0 * np.cos(theta_rad) * np.sin(phi_rad)
+    vz0 = v0 * np.sin(theta_rad)
+
+    # Начальные условия: [x, y, z, vx, vy, vz]
+    initial_conditions = [x0,y0,z0, vx0, vy0, vz0]
+
+    # Условие остановки: мяч достигает ворот
+    def reach_goal(t, state):
+        x, y, z, vx, vy, vz = state
+        return x - length
+
+    reach_goal.terminal = True  # Прерывание, если условие выполнено
+    reach_goal.direction = 1  # Считаем только положительное направление
+
+    # Условие остановки: мяч падает на землю
+    def hit_ground(t, state):
+        x, y, z, vx, vy, vz = state
+        return z
+
+    hit_ground.terminal = True  # Прерывание, если условие выполнено
+    hit_ground.direction = -1  # Считаем только отрицательное направление
+
+    # Решение ОДУ
+    solution = solve_ivp(
+        equations,
+        [0, 10],  # Временной интервал
+        initial_conditions,
+        max_step=0.01,
+        events=[reach_goal, hit_ground]  # События
+    )
+
+    # Проверка результата
+    if solution.status == 1:  # Событие остановило интегрирование
+        x, y, z = solution.y[0][-1], solution.y[1][-1], solution.y[2][-1]
+        #print(f"Мяч остановился в точке: x={x:.2f}, y={y:.2f}, z={z:.2f}")
+        return is_goal(x, y, z)
+
+    return False
+def plot_points(x_coords, y_coords, xlim=(-90, 90), ylim=(-5, 90)):
+    """
+    Строит график точек на основе массивов x_coords и y_coords.
+    :param x_coords: Список координат по оси X
+    :param y_coords: Список координат по оси Y
+    :param xlim: Кортеж, задающий пределы оси X (min, max)
+    :param ylim: Кортеж, задающий пределы оси Y (min, max)
+    """
+    plt.figure(figsize=(8, 8))
+    plt.scatter(x_coords, y_coords, color='blue', s=50, label='Точки')  # Построение точек
+    plt.title("График точек", fontsize=14)
+    plt.xlabel("Абсцисса (X)", fontsize=12)
+    plt.ylabel("Ордината (Y)", fontsize=12)
+    plt.xlim(xlim)  # Установка пределов по оси X
+    plt.ylim(ylim)  # Установка пределов по оси Y
+    plt.grid(True)
+    plt.axhline(0, color='black', linewidth=0.8, linestyle='--')  # Линия X=0
+    plt.axvline(0, color='black', linewidth=0.8, linestyle='--')  # Линия Y=0
+    plt.legend()
+    plt.show()
+
+v0 = 35  # начальная скорость, м/с
+th = []
+ph = []
+x0 = 80
+y0 = 32
+z0 = 0
+for phi in np.linspace(-90,90,181):
+  print(phi)
+  for theta in np.linspace(0,90,91):
+    if simulate_shot(v0,x0,y0,z0, theta, phi):
+        print(f"Мяч с начальной скоростью {v0} м/с, углом подъема {theta}° и углом отклонения {phi}° попадает в ворота.")
+        th.append(theta)
+        ph.append(phi)
+plot_points(ph,th)
+v0 = 35  # начальная скорость, м/с
+x = []
+y = []
+flag = False
+z0 = 0
+for x0 in np.linspace(0,100,30):
+  print(x0)
+  for y0 in np.linspace(0,64,30):
+      print(y0)
+      for phi in np.linspace(-90,90,20):
+        
+        for theta in np.linspace(0,90,20):
+            if simulate_shot(v0,x0,y0,z0, theta, phi):
+                #print(f"Мяч с начальной скоростью {v0} м/с, углом подъема {theta}° и углом отклонения {phi}° попадает в ворота.")
+                x.append(x0)
+                y.append(y0)
+                flag = True
+                break
+        if flag:
+           flag = False
+           break
+plot_points(x,y)
+
+v0 = 45  # начальная скорость, м/с
+theta = 30  # угол подъема, градусы
+phi =-35  # угол отклонения в горизонтальной плоскости, градусы
+th_s = []
+ph_s = []
+flag = False
+z0 = 0
+S = []
+for theta in np.linspace(-0,90,20):
+    print(theta)
+    count = 0
+    for x0 in np.linspace(0,100,50):
+        for y0 in np.linspace(0,64,50):
+            if simulate_shot(v0,x0,y0,z0, theta, phi):
+                #print(f"Мяч с начальной скоростью {v0} м/с, углом подъема {theta}° и углом отклонения {phi}° попадает в ворота.")
+                count += 1
+
+    S.append(count)
+    th_s.append(theta)
+plot_points(th_s,S)
+
+v0 = 45  # начальная скорость, м/с
+theta = 20  # угол подъема, градусы
+phi =55  # угол отклонения в горизонтальной плоскости, градусы
+ph1_s = []
+ph_s = []
+flag = False
+z0 = 0
+S4 = []
+for phi in np.linspace(-90,90,20):
+    print(phi)
+    count = 0
+    for x0 in np.linspace(0,100,50):
+        for y0 in np.linspace(0,64,50):
+            if simulate_shot(v0,x0,y0,z0, theta, phi):
+                #print(f"Мяч с начальной скоростью {v0} м/с, углом подъема {theta}° и углом отклонения {phi}° попадает в ворота.")
+                count += 1
+
+    S4.append(count)
+    ph1_s.append(phi)
+plot_points(ph1_s,S4)
+
+theta = 30  # угол подъема, градусы
+phi = 0  # угол отклонения в горизонтальной плоскости, градусы
+flag = False
+z0 = 0
+S_v = []
+v = []
+for v0 in np.linspace(0,105,10):
+    count = 0
+    print(v0)
+    for x0 in np.linspace(0,100,50):
+        for y0 in np.linspace(0,64,50):
+            for phi in np.linspace(-90,90,10):
+                for theta in np.linspace(0,90,10):
+                    if simulate_shot(v0,x0,y0,z0, theta, phi):
+                        count += 1
+                        flag = True
+                        break
+                if flag:
+                        flag = False
+                        break
+    v.append(v0)
+    S_v.append(count)
+
+plot_points( v,S_v)
+
 
 ```
 ## Численное решение модели
@@ -147,11 +345,11 @@ $V_z(t_0) = Vsin(\alpha)$
 Теперь определим зависимость площади, из которой можно попасть в ворота от угла удара по горизонтали. Для этого зафиксируем значения угла по вертикали (5, 20, 35). Для каждого фиксированного значения угла по горизонтали изоразим график зависимости S от alpha
 * alpha = 5
   
-![](gr32.jpg)
+![](gr31.png)
 
 * alpha = 20
   
-![](gr31.jpg)
+![](gr32.jpg)
 
 * alpha = 35
   
