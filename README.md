@@ -351,7 +351,7 @@ plot_points( v,S_v)
   
 ![](gr32.jpg)
 
-* alpha = 35
+* alpha = 60
   
 ![](gr33.jpg)
 
